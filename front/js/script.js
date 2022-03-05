@@ -18,7 +18,9 @@ fetch("http://localhost:3000/api/products")
         }
     })
     .catch(function(err){
-        console.log("Erreur lors du chargement : Le serveur ne répond pas");
+        let errorArticle = document.createElement("h3");
+        document.getElementById("items").appendChild(errorArticle);
+        errorArticle.textContent = "Une erreur est survenue : Impossible de contacter le serveur.";
     })
 
 

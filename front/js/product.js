@@ -1,6 +1,6 @@
 let url = new URLSearchParams(window.location.search);
 
-fetch('http://localhost:3000/api/products/' + url.get("id")) //récupère les données uniquement de l'objet possédant une valeur égale à l'id transmit.
+fetch('http://localhost:3000/api/products/' + url.get("id")) //get the data only from the items with the same value Id as the one we give
     .then(function(data){
         return data.json();
     })
