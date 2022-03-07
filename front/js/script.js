@@ -89,10 +89,11 @@ const getContent = (data) => {
 
 /**
  * Get the cart data stored in the local storage.
+ * You can use the existing values on the localstorage
  * @returns {Object} The cart data.
  */
  function getCart() {
-	const item = localStorage.getItem(Config.keyCart);
+	const item = localStorage.getItem("Produit");
 	const data = JSON.parse(item);
 
 	return data;
