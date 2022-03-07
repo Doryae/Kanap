@@ -1,5 +1,5 @@
 function saveAddedProduct() {
-  localStorage.setItem(Config.keyCart, JSON.stringify(this));
+  localStorage.setItem("Produit", JSON.stringify(this));
 }
 
 /**
