@@ -86,3 +86,14 @@ const getContent = (data) => {
         descriptionArray[i].textContent = `${data[i].description}`;
     }
 }
+
+/**
+ * Get the cart data stored in the local storage.
+ * @returns {Object} The cart data.
+ */
+ function getCart() {
+	const item = localStorage.getItem(Config.keyCart);
+	const data = JSON.parse(item);
+
+	return data;
+}

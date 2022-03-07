@@ -1,24 +1,28 @@
-
 function saveAddedProduct() {
-    localStorage.setItem("Produit", JSON.stringify(this));
+  localStorage.setItem(Config.keyCart, JSON.stringify(this));
 }
 
-function getAddedProduct(id) {
-    const lol = fetch("http://localhost:3000/api/products" + id)
-    const data = JSON.parse(lol); 
-    if(!id) {
-        throw "error";
-    } else {
-        return data;
-    }
+/**
+ * Get a product stored in the cart.
+ * @param {string} productId - The id of the desired product.
+ * @param {string} color - The color of the desired product.
+ * @returns {CartProduct} The desired product.
+ */
+function getAddedProduct(productId, color) {
+  return this.products.find(
+    (cartProduct) =>
+      cartProduct.productId === productId && cartProduct.color === color
+  );
 }
 
 function addProduct(productAdded) {
-    let cart = getAddedProduct(productAdded);
-    cart.push(productAdded);
-    saveAddedProduct(productAdded);
+  const productId = productAdded.productId;
+
+  //tu peux ajouter ici la condition sur la quantité et la couleur
+
+  return this.getAddedProduct(productId, productToAdd.color);
 }
 
 function test() {
-    console.log("test")
-};
+  console.log("test");
+}
