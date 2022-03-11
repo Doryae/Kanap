@@ -22,6 +22,7 @@ Then, append this balise as a child of div class="item__img"
 const showImage = (data) => {
     let createElement = document.createElement("img");
     createElement.setAttribute("src", `${data.imageUrl}`);
+    createElement.setAttribute("alt", `${data.altTxt}`);
     document.querySelector("article > div.item__img").appendChild(createElement);
 }
 
@@ -48,3 +49,20 @@ const colorsChoice = (data) => {
         document.getElementById("colors").appendChild(createOption);       
     }
 }
+
+/* --------------------------------- 
+Add to cart section
+-----------------------------------*/
+
+/* --------------------------------- 
+Necessity : When we click on the button, we need to obtain informations about the product...
+Those are :
+The  Id, the Image, the name of the product, the price, the color, and the quantity.
+We need to add this to the localStorage so we can get them for the cart.html page. 
+-----------------------------------*/
+
+
+document.getElementById("addToCart").addEventListener("click", function(e){
+    e.preventDefault();
+    addProduct();
+})
