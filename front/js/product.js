@@ -56,13 +56,14 @@ Add to cart section
 
 /* --------------------------------- 
 Necessity : When we click on the button, we need to obtain informations about the product...
-Those are :
-The  Id, the Image, the name of the product, the price, the color, and the quantity.
-We need to add this to the localStorage so we can get them for the cart.html page. 
+So when we click, we call the function addToCart() in cart.js (we need to load it on the product.html, or it won't work.)
+The informations that we will get by clicking on this button are : 
+The  Id, the color value and the quantity.
+Those informations will get stored in the local storage, so we can use them on other pages. 
 -----------------------------------*/
 
 
 document.getElementById("addToCart").addEventListener("click", function(e){
     e.preventDefault();
-    addProduct();
+    addToCart();
 })

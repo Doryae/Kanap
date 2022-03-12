@@ -1,74 +1,41 @@
-let product = {};
+// Function that is called when we click on the button on the product.html page.
 
-let sameIdAndColor;
+function addToCart() {
 
-let initialNumber = 0;
-let numberToAdd = 0;
-
-
-function saveCart(cart) {
-    let array = [];
-    array.push(localStorage.setItem("Produit", JSON.stringify(cart)));
-    console.log(typeof cart);
-}
-
-const addToCart = (p) => {
-    let cart = [];
-    console.log(typeof cart)
-    cart.push(p);
-
-    saveCart(cart);
-}
-
-const getCart = () => {
-    if(JSON.parse(localStorage.getItem("Produit")) == undefined){
-        return [];
-    }else {
-        return JSON.parse(localStorage.getItem("Produit"));
-    }
-}
-
-const addProduct = () => {
-
-    product = {
-        id: url.get("id"),
-        color: document.getElementById("colors").value,
-        quantity: parseInt(document.getElementById("quantity").value)
+    //We get the element that are needed : Id / color / quantity. The last two are values selected by the user.
+    let product = {
+        id: url.get("id"), //will search the parameter "id" of the url, and return it's value.
+        color: document.getElementById("colors").value, //will get the value of the id element colors.
+        quantity: parseInt(document.getElementById("quantity").value) //will get the value of the id element quantity AND make it an integral number
     }
 
+    //We need to get the local storage so we can analyse what's inside (or not) to apply conditions
+    let getLocalStorage = JSON.parse(localStorage.getItem("Produits")); //get the local storage with a JSON format (thanks to the JSON.parse)
 
-    ifSameProduct();
-    
-    if(sameIdAndColor){
-        console.log(typeof sameIdAndColor)
-        initialNumber = parseInt(sameIdAndColor.quantity);
+    //First of all : is there already something on the local storage, or not ?
+    if (getLocalStorage !== null) { //If the local storage is different then null, it means there is something in it. 
 
-        numberToAdd = parseInt(product.quantity);
+        //If he's not empty, then we need to search if there is already the item we want to add to our cart. If there is, we just update the product.quantity
+        //for that we need a function to search our array (that is : our local storage)
 
-        product.quantity = initialNumber + numberToAdd;
-        console.log(initialNumber + " " + numberToAdd);
-        console.log(product.quantity + " & " + typeof product.quantity);
+        let sameProduct = getLocalStorage.find(item => item.id === product.id && item.color === product.color); 
+        // If the items we are looking for is NOT in our local Storage, this function will return "undefined" (we can check it with the console.log)
+        
+        if (sameProduct !== undefined) { // => That means we HAVE the same item already in the local storage
 
-        saveCart(product);
+            let totalQuantity = parseInt(product.quantity) + parseInt(sameProduct.quantity);
+            sameProduct.quantity = totalQuantity; // will change the quantity in the local storage for the total.
+            localStorage.setItem("Produits", JSON.stringify(getLocalStorage)); //We save this. (need to stringify, because LocalStorage don't get some elements like array or object.)
+        } else {
+            //We are still in the first "if" (if NOT null), meaning that if there is something on the local storage but it ISN T the same product, then we need to add him to our cart
+            getLocalStorage.push(product); //we push the product, that will create another object in the array.
+            localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
+        }
 
-    }else {
-        console.log("else");
-        addToCart(product);
+    } else { // We aren't in the first "if", then it means that localStorage is NULL. 
+        getLocalStorage = []; // We create an empty array in which we will stock our objects.
+        getLocalStorage.push(product); 
+        localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
     }
 
 }
-
-const ifSameProduct = () => {
-    let getStorage = JSON.parse(localStorage.getItem("Produit"));
-    if(getStorage == null){
-        return [];
-    }
-    sameIdAndColor = getStorage.find(p => p.id === product.id && p.color === product.color);
-}
-/* --------------------------------- 
-Ce dont j'ai besoin :
-Récupérer l'id, la couleur et la quantité du produit lors du click sur le bouton, et le stocker dans le local storage. 
-SI le même produit avec la même couleur est déjà dans le local storage, additionner les quantités plutôt que de créer un nouvel item
-SINON créer un nouvel item comprenant les données de l'élément. 
------------------------------------*/
-
