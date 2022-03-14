@@ -39,3 +39,194 @@ function addToCart() {
     }
 
 }
+
+/* --------------------------------- 
+We fetch the data from the API
+-----------------------------------*/
+let getStorage = JSON.parse(localStorage.getItem("Produits"))
+
+fetch('http://localhost:3000/api/products/') //get the data only from the items with the same value Id as the one we give
+    .then(function(data){
+        return data.json();
+    })
+    .then(function(data){
+
+        getStorage.forEach(element => {
+            cartPagination();
+        });
+
+
+    })
+    .catch(function(err){
+        console.log("Erreur lors du chargement : Le serveur ne répond pas");
+    })
+
+/* --------------------------------- 
+Starting the cart.html 
+    => Need to Show each items stocked in the local storages, and the following elements :
+        The product - id, image, name, color, price, the quantity (that need to be reverified if the user change it).
+
+the pagination is like this =>             
+    <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
+        <div class="cart__item__img">
+          <img src="../images/product01.jpg" alt="Photographie d'un canapé">
+        </div>
+        <div class="cart__item__content">
+          <div class="cart__item__content__description">
+            <h2>Nom du produit</h2>
+            <p>Vert</p>
+            <p class="cart__price">  ---> What I modified a little.
+                <span class = "unity">42,00 €</span>
+                <span class = "total"> x €</span>
+            </p>
+          </div>
+          <div class="cart__item__content__settings">
+            <div class="cart__item__content__settings__quantity">
+              <p>Qté : </p>
+              <input type="number" class="itemQuantity" name="itemQuantity" min="1" max="100" value="42">
+            </div>
+            <div class="cart__item__content__settings__delete">
+              <p class="deleteItem">Supprimer</p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+I'll add a "price unity" and "article price", adding a class "cart__price" for the css.
+-----------------------------------*/
+
+let numberOfDifferentProduct = JSON.parse(localStorage.getItem("Produits"));
+let cartElement;
+let cartSecondElement;
+let cartThirdElement;
+
+const cartPagination = () => {
+
+    pageSkeleton();
+    appendDiv();
+    itemDescription();
+    itemSettings();
+
+}
+
+const pageSkeleton = () => {
+
+    cartElement = document.createElement("article");
+    document.getElementById("cart__items").appendChild(cartElement);
+    cartElement.classList.add("cart__item");
+
+    cartElement = document.createElement("div");
+    cartSecondElement = document.createElement("div");
+
+    const arrayArticle = document.querySelectorAll("section > article");
+
+    for(let article of arrayArticle) {
+        article.appendChild(cartElement); 
+        cartElement.classList.add("cart__item__img");
+        article.appendChild(cartSecondElement); 
+        cartSecondElement.classList.add("cart__item__content");
+    }
+
+    cartElement = document.createElement("img");
+
+    const arrayDivImg = document.querySelectorAll("article > div.cart__item__img");
+
+    for(let div of arrayDivImg) {
+        div.appendChild(cartElement);
+    }
+
+}
+
+const appendDiv = () => {
+
+    cartElement = document.createElement("div");
+    cartSecondElement = document.createElement("div");
+
+    const arrayDivContent = document.querySelectorAll("div.cart__item__content");
+
+    for(let div of arrayDivContent) {
+        div.appendChild(cartElement);
+        cartElement.classList.add("cart__item__content__description"); 
+        div.appendChild(cartSecondElement);
+        cartSecondElement.classList.add("cart__item__content__settings"); 
+    }
+
+}
+
+const itemDescription = () => {
+
+    cartElement = document.createElement("h2");
+    cartSecondElement = document.createElement("p");
+    cartThirdElement = document.createElement("p");
+
+    const arrayDivDescription = document.querySelectorAll(".cart__item__content__description");
+
+    for(let elements of arrayDivDescription) {
+        elements.appendChild(cartElement);
+        elements.appendChild(cartSecondElement);
+        elements.appendChild(cartThirdElement);
+        cartThirdElement.classList.add("cart__price");
+    }
+
+}
+
+const itemSettings = () => {
+
+    cartElement = document.createElement("div");
+    cartSecondElement = document.createElement("div");
+
+    const arraySettings = document.querySelectorAll(".cart__item__content__settings");
+
+    for(let div of arraySettings) {
+        div.appendChild(cartElement); 
+        cartElement.classList.add("cart__item__content__settings__quantity");
+        div.appendChild(cartSecondElement); 
+        cartSecondElement.classList.add("cart__item__content__settings__delete");
+    }
+
+    cartElement = document.createElement("p");
+    cartSecondElement = document.createElement("input");
+
+    const arraySettingsQuantity = document.querySelectorAll(".cart__item__content__settings__quantity");
+
+    for(let elements of arraySettingsQuantity) {
+        elements.appendChild(cartElement);
+        elements.appendChild(cartSecondElement);
+        cartSecondElement.classList.add("itemQuantity");
+    }
+
+    cartThirdElement = document.createElement("p");
+    const arraySettingsDelete = document.querySelectorAll(".cart__item__content__settings__delete");
+
+    for(let p of arraySettingsDelete) {
+        p.appendChild(cartThirdElement);
+        cartThirdElement.classList.add("deleteItem")
+    }
+
+}
+
+// const setAttribute = () => {
+
+//     fetch('http://localhost:3000/api/products/') //get the data only from the items with the same value Id as the one we give
+//     .then(function(data){
+//         return data.json();
+//     })
+//     .then(function(data){
+
+
+//         let attributeArticle = Array.from(document.querySelectorAll("article"));
+
+        
+//         for(i = 0; i < getStorage.length; i++) {
+//             let findId = getStorage[i].id;
+            
+//             let same = data.find(item => item._id === findId);
+//             console.log(same)
+//             if(same != undefined){
+//                 attributeArticle[i].setAttribute("data-id", findId)
+//             }
+            
+//             }
+//         })
+// }
