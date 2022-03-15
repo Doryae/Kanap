@@ -43,29 +43,61 @@ function addToCart() {
 /* --------------------------------- 
 We fetch the data from the API
 -----------------------------------*/
-let getStorage = JSON.parse(localStorage.getItem("Produits"))
 
-fetch('http://localhost:3000/api/products/') //get the data only from the items with the same value Id as the one we give
-    .then(function(data){
-        return data.json();
-    })
-    .then(function(data){
-
-        getStorage.forEach(element => {
-            cartPagination();
-        });
+//we get the localStorage
+let getStorage = JSON.parse(localStorage.getItem("Produits"));
 
 
-    })
-    .catch(function(err){
-        console.log("Erreur lors du chargement : Le serveur ne répond pas");
-    })
+// fetch('http://localhost:3000/api/products/') //get the data only from the items with the same value Id as the one we give
+//     .then(function(data){
+//         return data.json();
+//     })
+//     .then(function(data){
+//         console.log(data);
+
+//         let getData = Array.from(document.querySelectorAll("article"));
+//         let arrayData = [];
+
+
+//         // for(i = 0; i < getData.length; i++) {
+//         //     let dataId = getData[i].getAttribute("data-id");
+//         //     let dataColor = getData[i].getAttribute("data-color");
+//         //     let data = {
+//         //         id: `${dataId}`,
+//         //         color: `${dataColor}`
+//         //     }
+//         //     arrayData.push(data);
+//         // }
+
+
+//         let allImg = document.querySelectorAll(".cart__item__img > img")
+
+//         let sameProduct = getLocalStorage.find(item => item.id === data.id)
+//         console.log(sameProduct)
+
+
+
+//         // for( i = 0; i < data.length; i++) {
+//         //     //si l'image à la même id que l'id du storage alors =>
+//         //     if(getStorage[i].id === data[i]._id){
+//         //         allImg[i].setAttribute("src", `${data[i].imageUrl}`)
+//         //     }
+//         // }
+                
+
+
+//     })
+//     .catch(function(err){
+//         console.log("Erreur lors du chargement : Le serveur ne répond pas");
+//     })
+
+
+
 
 /* --------------------------------- 
 Starting the cart.html 
     => Need to Show each items stocked in the local storages, and the following elements :
         The product - id, image, name, color, price, the quantity (that need to be reverified if the user change it).
-
 the pagination is like this =>             
     <article class="cart__item" data-id="{product-ID}" data-color="{product-color}">
         <div class="cart__item__img">
@@ -92,7 +124,6 @@ the pagination is like this =>
         </div>
       </article>
     </section>
-
 I'll add a "price unity" and "article price", adding a class "cart__price" for the css.
 -----------------------------------*/
 
@@ -116,16 +147,25 @@ const pageSkeleton = () => {
     document.getElementById("cart__items").appendChild(cartElement);
     cartElement.classList.add("cart__item");
 
+    const arrayArticle = document.querySelectorAll("section > article");
+
+    for(i = 0; i < arrayArticle.length; i++) {
+
+        cartElement.setAttribute("data-id", `${getStorage[i].id}`);
+        cartElement.setAttribute("data-color", `${getStorage[i].color}`);
+
+    }
+
     cartElement = document.createElement("div");
     cartSecondElement = document.createElement("div");
 
-    const arrayArticle = document.querySelectorAll("section > article");
-
     for(let article of arrayArticle) {
+
         article.appendChild(cartElement); 
         cartElement.classList.add("cart__item__img");
         article.appendChild(cartSecondElement); 
         cartSecondElement.classList.add("cart__item__content");
+
     }
 
     cartElement = document.createElement("img");
@@ -194,7 +234,18 @@ const itemSettings = () => {
         elements.appendChild(cartElement);
         elements.appendChild(cartSecondElement);
         cartSecondElement.classList.add("itemQuantity");
+        cartSecondElement.setAttribute("type", "number");
+        cartSecondElement.setAttribute("name", "itemQuantity");
+        cartSecondElement.setAttribute("min", "1");
+        cartSecondElement.setAttribute("max", "100");
     }
+
+    const arrayOfInput = document.querySelectorAll(".cart__item__content__settings__quantity > input");
+    
+    for(i = 0; i < arrayOfInput.length; i++) {
+        arrayOfInput[i].setAttribute("value", `${getStorage[i].quantity}`)
+    }
+
 
     cartThirdElement = document.createElement("p");
     const arraySettingsDelete = document.querySelectorAll(".cart__item__content__settings__delete");
@@ -206,27 +257,29 @@ const itemSettings = () => {
 
 }
 
-// const setAttribute = () => {
+getStorage.forEach(element => {
+    cartPagination();
+});
 
-//     fetch('http://localhost:3000/api/products/') //get the data only from the items with the same value Id as the one we give
-//     .then(function(data){
-//         return data.json();
-//     })
-//     .then(function(data){
+const getElement = () => {
 
+    let getData = Array.from(document.querySelectorAll("article"));
+    let getImg = document.querySelectorAll(".cart__item__img > img");
+    console.log(getImg);
+    
+    for(i = 0; i < getData.length; i++) {
 
-//         let attributeArticle = Array.from(document.querySelectorAll("article"));
+        fetch('http://localhost:3000/api/products/' + `${getData[i].getAttribute("data-id")}`)
+            .then(function(data){
+                return data.json();
+            })
+            .then(function(data){
+                console.log(data);
+                getImg[i].setAttribute("src", `${data[i].imageUrl}`)
 
-        
-//         for(i = 0; i < getStorage.length; i++) {
-//             let findId = getStorage[i].id;
-            
-//             let same = data.find(item => item._id === findId);
-//             console.log(same)
-//             if(same != undefined){
-//                 attributeArticle[i].setAttribute("data-id", findId)
-//             }
-            
-//             }
-//         })
-// }
+            })
+            .catch(function(err){
+                console.log("Erreur de Fetch")
+            })
+    }
+}
