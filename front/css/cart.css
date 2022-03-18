@@ -85,6 +85,11 @@ h2 {
 	font-size: 22px;
 }
 
+.cart-price {
+	display: flex;
+	justify-content: space-between;
+}
+
 /*******/
 /*Order*/
 /*******/

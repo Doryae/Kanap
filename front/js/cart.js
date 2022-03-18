@@ -107,7 +107,7 @@ the pagination is like this =>
           <div class="cart__item__content__description">
             <h2>Nom du produit</h2>
             <p>Vert</p>
-            <p class="cart__price">  ---> What I modified a little.
+            <p class="cart-price">  ---> What I modified a little.
                 <span class = "unity">42,00 €</span>
                 <span class = "total"> x €</span>
             </p>
@@ -124,7 +124,7 @@ the pagination is like this =>
         </div>
       </article>
     </section>
-I'll add a "price unity" and "article price", adding a class "cart__price" for the css.
+I'll add a "price unity" and "article price", adding a class "cart-price" for the css.
 -----------------------------------*/
 
 let numberOfDifferentProduct = JSON.parse(localStorage.getItem("Produits"));
@@ -205,8 +205,19 @@ const itemDescription = () => {
     for(let elements of arrayDivDescription) {
         elements.appendChild(cartElement);
         elements.appendChild(cartSecondElement);
+        cartSecondElement.classList.add("cart-color");
         elements.appendChild(cartThirdElement);
-        cartThirdElement.classList.add("cart__price");
+        cartThirdElement.classList.add("cart-price");
+    }
+
+    cartElement = document.createElement("span");
+    cartSecondElement = document.createElement("span");
+
+    const arrayPrice = document.querySelectorAll(".cart-price");
+
+    for(let span of arrayPrice) {
+        span.appendChild(cartElement);
+        span.appendChild(cartSecondElement);
     }
 
 }
@@ -252,7 +263,8 @@ const itemSettings = () => {
 
     for(let p of arraySettingsDelete) {
         p.appendChild(cartThirdElement);
-        cartThirdElement.classList.add("deleteItem")
+        cartThirdElement.classList.add("deleteItem");
+        cartThirdElement.textContent = "Supprimer";
     }
 
 }
@@ -261,25 +273,73 @@ getStorage.forEach(element => {
     cartPagination();
 });
 
-const getElement = () => {
 
-    let getData = Array.from(document.querySelectorAll("article"));
-    let getImg = document.querySelectorAll(".cart__item__img > img");
-    console.log(getImg);
-    
+let getData = Array.from(document.querySelectorAll("article"));
+let getImg = document.querySelectorAll(".cart__item__img > img");
+let dataProduct = [];
+
+const test = () => {
+
+    getElement();
+    //problème
+    console.log(dataProduct)
+
+    cartDisplay();
+}
+
+
+async function getElement() {
+
+    let variable = [];
+
     for(i = 0; i < getData.length; i++) {
 
-        fetch('http://localhost:3000/api/products/' + `${getData[i].getAttribute("data-id")}`)
+
+        const response = await fetch('http://localhost:3000/api/products/' + `${getData[i].getAttribute("data-id")}`)
             .then(function(data){
                 return data.json();
             })
             .then(function(data){
-                console.log(data);
-                getImg[i].setAttribute("src", `${data[i].imageUrl}`)
-
+                console.log(`${data._id}`)
+                variable.push(data);
             })
             .catch(function(err){
                 console.log("Erreur de Fetch")
-            })
+            });
+        };
+
+
+        dataProduct = variable;
+        console.log(dataProduct)
+
+        
+    }
+
+    
+let h2 = document.querySelectorAll(".cart__item__content__description > h2");
+let pDesc = document.querySelectorAll(".cart-color");
+let pPriceUnity = document.querySelectorAll(".cart-price :first-child");
+let pPriceTotal = document.querySelectorAll(".cart-price :nth-child(2)");
+let inputQuantity = document.querySelectorAll(".cart__item__content__settings__quantity > input ")
+let totalQuantity = 0;
+let totalPrice = 0;
+
+function cartDisplay() {
+
+
+    for(x = 0; x < getData.length; x++) {
+
+        getImg[x].setAttribute("src", `${dataProduct[x].imageUrl}`);
+        h2[x].textContent = `${dataProduct[x].name}`;
+        console.log(dataProduct[x]);
+        pDesc[x].textContent = `${getStorage[x].color}`;
+        pPriceUnity[x].textContent = `${dataProduct[x].price}€ / unité`;
+        pPriceTotal[x].textContent = `${dataProduct[x].price * getStorage[x].quantity}€ / total`;
+        getStorage[x].quantity = inputQuantity[x].value; 
+        document.getElementById("totalQuantity").textContent = `${totalQuantity += parseInt(getStorage[x].quantity)}`;
+        document.getElementById("totalPrice").textContent = `${totalPrice += parseInt(dataProduct[x].price * getStorage[x].quantity)}`;
+        console.log(`${parseInt(dataProduct[x].price)}` + " " + `${getStorage[x].quantity}`)
+
     }
 }
+
