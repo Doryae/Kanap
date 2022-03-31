@@ -1,44 +1,4 @@
-// Function that is called when we click on the button on the product.html page.
 
-function addToCart() {
-
-    //We get the element that are needed : Id / color / quantity. The last two are values selected by the user.
-    let product = {
-        id: url.get("id"), //will search the parameter "id" of the url, and return it's value.
-        color: document.getElementById("colors").value, //will get the value of the id element colors.
-        quantity: parseInt(document.getElementById("quantity").value) //will get the value of the id element quantity AND make it an integral number
-    }
-
-    //We need to get the local storage so we can analyse what's inside (or not) to apply conditions
-    let getLocalStorage = JSON.parse(localStorage.getItem("Produits")); //get the local storage with a JSON format (thanks to the JSON.parse)
-
-    //First of all : is there already something on the local storage, or not ?
-    if (getLocalStorage !== null) { //If the local storage is different then null, it means there is something in it. 
-
-        //If he's not empty, then we need to search if there is already the item we want to add to our cart. If there is, we just update the product.quantity
-        //for that we need a function to search our array (that is : our local storage)
-
-        let sameProduct = getLocalStorage.find(item => item.id === product.id && item.color === product.color); 
-        // If the items we are looking for is NOT in our local Storage, this function will return "undefined" (we can check it with the console.log)
-        
-        if (sameProduct !== undefined) { // => That means we HAVE the same item already in the local storage
-
-            let totalQuantity = parseInt(product.quantity) + parseInt(sameProduct.quantity);
-            sameProduct.quantity = totalQuantity; // will change the quantity in the local storage for the total.
-            localStorage.setItem("Produits", JSON.stringify(getLocalStorage)); //We save this. (need to stringify, because LocalStorage don't get some elements like array or object.)
-        } else {
-            //We are still in the first "if" (if NOT null), meaning that if there is something on the local storage but it ISN T the same product, then we need to add him to our cart
-            getLocalStorage.push(product); //we push the product, that will create another object in the array.
-            localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
-        }
-
-    } else { // We aren't in the first "if", then it means that localStorage is NULL. 
-        getLocalStorage = []; // We create an empty array in which we will stock our objects.
-        getLocalStorage.push(product); 
-        localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
-    }
-
-}
 
 /* --------------------------------- 
 We fetch the data from the API
@@ -46,52 +6,6 @@ We fetch the data from the API
 
 //we get the localStorage
 let getStorage = JSON.parse(localStorage.getItem("Produits"));
-
-
-// fetch('http://localhost:3000/api/products/') //get the data only from the items with the same value Id as the one we give
-//     .then(function(data){
-//         return data.json();
-//     })
-//     .then(function(data){
-//         console.log(data);
-
-//         let getData = Array.from(document.querySelectorAll("article"));
-//         let arrayData = [];
-
-
-//         // for(i = 0; i < getData.length; i++) {
-//         //     let dataId = getData[i].getAttribute("data-id");
-//         //     let dataColor = getData[i].getAttribute("data-color");
-//         //     let data = {
-//         //         id: `${dataId}`,
-//         //         color: `${dataColor}`
-//         //     }
-//         //     arrayData.push(data);
-//         // }
-
-
-//         let allImg = document.querySelectorAll(".cart__item__img > img")
-
-//         let sameProduct = getLocalStorage.find(item => item.id === data.id)
-//         console.log(sameProduct)
-
-
-
-//         // for( i = 0; i < data.length; i++) {
-//         //     //si l'image à la même id que l'id du storage alors =>
-//         //     if(getStorage[i].id === data[i]._id){
-//         //         allImg[i].setAttribute("src", `${data[i].imageUrl}`)
-//         //     }
-//         // }
-                
-
-
-//     })
-//     .catch(function(err){
-//         console.log("Erreur lors du chargement : Le serveur ne répond pas");
-//     })
-
-
 
 
 /* --------------------------------- 
@@ -131,6 +45,16 @@ let numberOfDifferentProduct = JSON.parse(localStorage.getItem("Produits"));
 let cartElement;
 let cartSecondElement;
 let cartThirdElement;
+
+// If the localStorage is empty, it will return a text that says : there is no product in your cart.
+// Else, if the localStorage is NOT empty, it will run the rest of the code.
+
+if(getStorage === null) {
+    cartElement = document.createElement("article");
+    document.getElementById("cart__items").appendChild(cartElement);
+    cartElement.textContent = "Vous n'avez ajouté aucun produit à votre panier."
+} else {
+
 
 const cartPagination = () => {
 
@@ -267,30 +191,18 @@ const itemSettings = () => {
         cartThirdElement.textContent = "Supprimer";
     }
 
-}
+};
+
 
 getStorage.forEach(element => {
     cartPagination();
 });
 
-
 let getData = Array.from(document.querySelectorAll("article"));
-let getImg = document.querySelectorAll(".cart__item__img > img");
-let dataProduct = [];
-
-const test = () => {
-
-    getElement();
-    //problème
-    console.log(dataProduct)
-
-    cartDisplay();
-}
-
 
 async function getElement() {
 
-    let variable = [];
+    let arrayProduct = [];
 
     for(i = 0; i < getData.length; i++) {
 
@@ -300,8 +212,7 @@ async function getElement() {
                 return data.json();
             })
             .then(function(data){
-                console.log(`${data._id}`)
-                variable.push(data);
+                arrayProduct.push(data);
             })
             .catch(function(err){
                 console.log("Erreur de Fetch")
@@ -309,13 +220,18 @@ async function getElement() {
         };
 
 
-        dataProduct = variable;
-        console.log(dataProduct)
+        dataProduct = arrayProduct;
 
         
     }
 
-    
+
+let getImg = document.querySelectorAll(".cart__item__img > img");
+let dataProduct = [];
+
+
+
+
 let h2 = document.querySelectorAll(".cart__item__content__description > h2");
 let pDesc = document.querySelectorAll(".cart-color");
 let pPriceUnity = document.querySelectorAll(".cart-price :first-child");
@@ -325,21 +241,75 @@ let totalQuantity = 0;
 let totalPrice = 0;
 
 function cartDisplay() {
-
-
+    
+    
     for(x = 0; x < getData.length; x++) {
 
         getImg[x].setAttribute("src", `${dataProduct[x].imageUrl}`);
         h2[x].textContent = `${dataProduct[x].name}`;
-        console.log(dataProduct[x]);
         pDesc[x].textContent = `${getStorage[x].color}`;
         pPriceUnity[x].textContent = `${dataProduct[x].price}€ / unité`;
         pPriceTotal[x].textContent = `${dataProduct[x].price * getStorage[x].quantity}€ / total`;
         getStorage[x].quantity = inputQuantity[x].value; 
         document.getElementById("totalQuantity").textContent = `${totalQuantity += parseInt(getStorage[x].quantity)}`;
         document.getElementById("totalPrice").textContent = `${totalPrice += parseInt(dataProduct[x].price * getStorage[x].quantity)}`;
-        console.log(`${parseInt(dataProduct[x].price)}` + " " + `${getStorage[x].quantity}`)
 
     }
 }
 
+const displayElement = () => {
+
+    getElement()
+        .then(function(){
+            cartDisplay()
+        });
+
+}
+
+displayElement();
+
+// Modify the quantity of a selected item from the cart and change it in the local Storage (and actualise the page)
+
+
+let changeQuantity = document.querySelectorAll(".itemQuantity");
+console.log(changeQuantity)
+
+for(let q = 0; q < changeQuantity.length; q++) {
+
+    changeQuantity[q].addEventListener("change", function(e){
+
+        let quantityValue = parseInt(changeQuantity[q].value);
+        getStorage[q].quantity = quantityValue;
+        localStorage.setItem("Produits", JSON.stringify(getStorage));
+        location.reload();
+
+    })
+}
+
+// Delete a selected item from the cart (and actualise the page)
+
+let item = document.querySelectorAll(".deleteItem");
+
+for(let d = 0; d < item.length; d++) {
+    item[d].addEventListener("click", function(e){
+
+        getStorage.splice(d, 1);
+        localStorage.setItem("Produits", JSON.stringify(getStorage));
+        location.reload();
+
+    })
+}
+
+// Delete all the items in one click thanks to the button added in cart.html (see the modification section)
+
+let clearCart = document.getElementById("delete-all");
+
+clearCart.addEventListener("click", function(e) {
+    
+    e.preventDefault();
+    localStorage.clear();
+    location.reload();
+
+})
+
+}

@@ -85,9 +85,37 @@ h2 {
 	font-size: 22px;
 }
 
+/**************/
+/*Modification*/
+/**************/
 .cart-price {
 	display: flex;
 	justify-content: space-between;
+}
+
+.btn__delete {
+	display: flex;
+	justify-content: center;
+}
+
+#delete-all {
+	cursor: pointer;
+	background-color: #fff;
+	border: 1px solid rgba(0, 0, 0, 0.3);
+	border-radius: 5px;
+	box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.6);
+	padding: 10px 15px;
+	transition: .3s;
+}
+
+#delete-all:hover {
+	transform: scale(1.1);
+}
+
+#delete-all:active {
+	box-shadow: 0px 0px 0px rgba(0, 0, 0, 0.6);
+	transform: translateX(-2px);
+	animation-fill-mode: forwards;
 }
 
 /*******/
