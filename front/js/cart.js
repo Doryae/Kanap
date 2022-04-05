@@ -396,7 +396,7 @@ let city = document.getElementById("city");
 
 const validCity = (cityInput) => {
 
-  let cityRegExp = /^[a-zé]{1}[\D]{2,24}$/ig;
+  let cityRegExp = /^[a-zé]{1}[a-z-'éèùçà]{2,24}$/ig;
   let cityTest = cityRegExp.test(cityInput.value);
   let errorMsg = document.getElementById("cityErrorMsg");
 
@@ -437,3 +437,57 @@ email.addEventListener("change", function() {
 /* ------------------------------------- 
 Form - Regular Expression -- END --
 --------------------------------------*/
+
+let order = document.getElementById("order");
+
+order.addEventListener("click", function(e) {
+  e.preventDefault();
+
+  if(firstNameErrorMsg.textContent != " " || lastNameErrorMsg.textContent != " " || addressErrorMsg.textContent != " " || cityErrorMsg.textContent != " " || emailErrorMsg.textContent != " ") {
+    alert("Veuillez renseigner CORRECTEMENT tout les champs du formulaire.");
+  } else {
+    if (getStorage === null || getStorage.length === 0) {
+      alert("Veuillez ajouter un produit avant de passer commande !")
+    } else {
+  
+      let contact = {
+        firstName: firstName.value,
+        lastName: lastName.value,
+        address: address.value,
+        city: city.value,
+        email: email.value,
+      }
+    
+      let products = [];
+    
+      for (let i = 0; i < getStorage.length; i++) {
+        products.push(getStorage[i].id);
+      }
+    
+      fetch("http://localhost:3000/api/products/order", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          contact,
+          products
+        })
+      })
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        console.log(data)
+        let orderId = data.orderId;
+  
+        window.location.href = "confirmation.html?id=" + orderId;
+      })
+      .catch(error => console.log(error));
+  
+      localStorage.clear();
+    }
+  }
+
+
+});
