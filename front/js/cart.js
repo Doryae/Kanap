@@ -165,6 +165,7 @@ if (getStorage === null || getStorage.length === 0) {
 
     for (let elements of arraySettingsQuantity) {
       elements.appendChild(cartElement);
+      cartElement.textContent = "Qté : ";
       elements.appendChild(cartSecondElement);
       cartSecondElement.classList.add("itemQuantity");
       cartSecondElement.setAttribute("type", "number");

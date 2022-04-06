@@ -77,25 +77,55 @@ function addToCart() {
         id: url.get("id"), //will search the parameter "id" of the url, and return it's value.
         color: document.getElementById("colors").value, //will get the value of the id element colors.
         quantity: parseInt(document.getElementById("quantity").value) //will get the value of the id element quantity AND make it an integral number
-    }
+    };
+
+// Function that will create a block where a message will appear to say what is lacking for adding a product in the cart
+// Or to mention that the product is well added to the cart.
+
+let errorAlert = "❌";
+let allClearAlert = "✔️";
+
+const createAlertMessage = () => {
+    const mainBlock = document.querySelector("main .limitedWidthBlock");
+    const createAlertBlock = document.createElement("div");
+    const createAlertParagraph = document.createElement("p");
+    const createCloseButton = document.createElement("button");
+
+    if(document.querySelector(".alert") === null) { // if the div class="alert" doesn't exist, then create one on the page. 
+    mainBlock.appendChild(createAlertBlock);
+    createAlertBlock.classList.add("blockAlert");
+    createAlertBlock.appendChild(createAlertParagraph);
+    createAlertParagraph.classList.add("alert");
+    createAlertBlock.appendChild(createCloseButton);
+    createCloseButton.classList.add("closeMsg");
+    createCloseButton.textContent = "Fermer le message";
+    } // if it exists already, the code won't run any longer, and won't create more iteration.
+
+    document.querySelector(".closeMsg").addEventListener("click", (e) => {
+        e.preventDefault();
+        document.querySelector(".blockAlert").remove();
+    })
+
+}
 
 
     // Set the conditions : Need a color selected and a number beetween 1 and 100.
     // If only one of the condition is not good : change the warning.
-    if(product.color === "" && product.quantity === 0 && product.quantity <= 100) {
-        alert("Veuillez Spécifier une couleur, \nEt un nombre d'article comprit entre 1 & 100")
-    }else if(product.color === "" && product.quantity > 100) {
-        alert("Veuillez Spécifier une couleur, \nEt un nombre d'article comprit entre 1 & 100")
+    if(product.color === "" && (product.quantity === 0 || product.quantity > 100)) {
+        createAlertMessage();
+        document.querySelector(".alert").innerHTML = `${errorAlert} ${errorAlert} ${errorAlert}<br/>Veuillez Spécifier une couleur,<br/>Et un nombre d'article comprit entre 1 & 100`;
     }else {
-
     if(product.color === "") {
-        alert("Veuillez Spécifier une couleur.")
+        createAlertMessage();
+        document.querySelector(".alert").innerHTML = `${errorAlert} ${errorAlert} ${errorAlert}<br/>Veuillez Spécifier une couleur.`;
     } else {
 
     if(product.quantity === 0){
-        alert("Vous devez ajouter au moins un article.");
+        createAlertMessage();
+        document.querySelector(".alert").innerHTML = `${errorAlert} ${errorAlert} ${errorAlert}<br/>Vous devez ajouter au moins un article.`;
     }else if(product.quantity > 100){
-        alert("Vous ne pouvez ajouter plus de 100 produits dans le panier.")
+        createAlertMessage();
+        document.querySelector(".alert").innerHTML = `${errorAlert} ${errorAlert} ${errorAlert}<br/>Vous ne pouvez ajouter plus de 100 produits dans le panier.`;
     }else {
 
     //We need to get the local storage so we can analyse what's inside (or not) to apply conditions
@@ -114,25 +144,33 @@ function addToCart() {
 
             let totalQuantity = parseInt(product.quantity) + parseInt(sameProduct.quantity);
             if(totalQuantity > 100) {
-                alert("Le total de vos ajouts au panier sur ce même produit est supérieur à 100.\nNous garderons donc 100 comme quantité pour votre panier.\nVous pourrez modifier la quantité sur la page 'panier'. ");
+                createAlertMessage();
+                document.querySelector(".alert").innerHTML = `${errorAlert} ${errorAlert} ${errorAlert}<br/>Le total de vos ajouts au panier sur ce même produit est supérieur à 100.
+                <br/>Nous garderons donc 100 comme quantité pour votre panier.<br/>Vous pourrez modifier la quantité sur la page 'panier'.
+                <br/>${allClearAlert} ${allClearAlert} ${allClearAlert}<br/>Votre Panier a été mis à jour.`;
                 sameProduct.quantity = 100;
             }else{
                 sameProduct.quantity = totalQuantity; // will change the quantity in the local storage for the total.
+                createAlertMessage();
+                document.querySelector(".alert").innerHTML = `${allClearAlert} ${allClearAlert} ${allClearAlert}<br/>Votre Panier a été mis à jour.`;
             }
             localStorage.setItem("Produits", JSON.stringify(getLocalStorage)); //We save this. (need to stringify, because LocalStorage don't get some elements like array or object.)
         } else {
             //We are still in the first "if" (if NOT null), meaning that if there is something on the local storage but it ISN T the same product, then we need to add him to our cart
             getLocalStorage.push(product); //we push the product, that will create another object in the array.
             localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
+            createAlertMessage();
+            document.querySelector(".alert").innerHTML = `${allClearAlert} ${allClearAlert} ${allClearAlert}<br/>Votre Panier a été mis à jour.`;
+
         }
 
     } else { // We aren't in the first "if", then it means that localStorage is NULL. 
         getLocalStorage = []; // We create an empty array in which we will stock our objects.
         getLocalStorage.push(product); 
         localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
+        createAlertMessage();
+        document.querySelector(".alert").innerHTML = `${allClearAlert} ${allClearAlert} ${allClearAlert}<br/>Votre Panier a été mis à jour.`;
     }
-
-    alert("Produit Ajouté au panier.")
 
 }
 
