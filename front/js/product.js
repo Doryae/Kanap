@@ -55,7 +55,7 @@ Add to cart section
 
 /* --------------------------------- 
 Necessity : When we click on the button, we need to obtain informations about the product...
-So when we click, we call the function addToCart() in cart.js (we need to load it on the product.html, or it won't work.)
+So when we click, we call the function addToCart().
 The informations that we will get by clicking on this button are : 
 The  Id, the color value and the quantity.
 Those informations will get stored in the local storage, so we can use them on other pages. 
@@ -98,7 +98,7 @@ function addToCart() {
       createCloseButton.classList.add("closeMsg");
       createCloseButton.textContent = "Fermer le message";
 
-    } else {// if it exists already, the code won't run any longer, and won't create more iteration.
+    } else {// if it exists already, we remove it so we can create a new one. So the alert messages won't stack, and it will not create an error in the console
       document.querySelector(".blockAlert").remove();
       mainBlock.appendChild(createAlertBlock);
       createAlertBlock.classList.add("blockAlert");
@@ -109,7 +109,7 @@ function addToCart() {
       createCloseButton.textContent = "Fermer le message";
     }
 
-    document.querySelector(".closeMsg").addEventListener("click", (e) => {
+    document.querySelector(".closeMsg").addEventListener("click", (e) => { // Close the alert message when we click on the button
       e.preventDefault();
       document.querySelector(".blockAlert").remove();
     });
@@ -162,7 +162,8 @@ function addToCart() {
 
             let totalQuantity =
               parseInt(product.quantity) + parseInt(sameProduct.quantity);
-            if (totalQuantity > 100) {
+            if (totalQuantity > 100) { 
+              // If the total quantity is superior to 100, then it will update the quantity to 100 and won't allow to increase it. (But will accept decrease)
               createAlertMessage();
               document.querySelector(
                 ".alert"
@@ -190,6 +191,7 @@ function addToCart() {
         } else {
           // We aren't in the first "if", then it means that localStorage is NULL.
           getLocalStorage = []; // We create an empty array in which we will stock our objects.
+          // We push it and save it in the local Storage.
           getLocalStorage.push(product);
           localStorage.setItem("Produits", JSON.stringify(getLocalStorage));
           createAlertMessage();

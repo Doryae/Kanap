@@ -297,7 +297,7 @@ if (getStorage === null || getStorage.length === 0) {
     });
   }
 
-  // Delete a selected item from the cart (and actualise the page)
+  // Delete a SINGLE selected item from the cart (and actualise the page)
 
   let item = document.querySelectorAll(".deleteItem");
 
@@ -309,7 +309,7 @@ if (getStorage === null || getStorage.length === 0) {
     });
   }
 
-  // Delete all the items in one click thanks to the button added in cart.html (see the modification section)
+  // Delete ALL the items in one click thanks to the button added in cart.html (see the modification section)
 
   let clearCart = document.getElementById("delete-all");
 
@@ -426,7 +426,7 @@ const validEmail = (emailInput) => {
   if (emailTest != true) {
     errorMsg.textContent = "Veuillez indiquer une adrese Email valide";
   } else {
-    errorMsg.textContent = " ";
+    errorMsg.textContent = "";
   }
 
 };
@@ -441,15 +441,22 @@ Form - Regular Expression -- END --
 
 let order = document.getElementById("order");
 
+// When we click to the button "order"
+
 order.addEventListener("click", function(e) {
   e.preventDefault();
 
-  if(firstNameErrorMsg.textContent != " " || lastNameErrorMsg.textContent != " " || addressErrorMsg.textContent != " " || cityErrorMsg.textContent != " " || emailErrorMsg.textContent != " ") {
-    alert("Veuillez renseigner CORRECTEMENT tout les champs du formulaire.");
-  } else {
-    if (getStorage === null || getStorage.length === 0) {
-      alert("Veuillez ajouter un produit avant de passer commande !")
-    } else {
+  //Verify that there is at least one item in the cart
+
+  if(getStorage === null || getStorage.length === 0) {
+    alert("Veuillez ajouter un produit avant de passer commande !")
+
+    // If there is an item, we check if there's an error in the input.
+  } else if(firstNameErrorMsg.textContent != "" || lastNameErrorMsg.textContent != "" || addressErrorMsg.textContent != "" || cityErrorMsg.textContent != "" || emailErrorMsg.textContent != ""){
+      alert("Veuillez renseigner CORRECTEMENT tout les champs du formulaire.");
+    } else { // If all is good, then we got here :
+      // We create an object contact as requested by the server and an array for the products.
+      // The array can ONLY contain the products ID. 
   
       let contact = {
         firstName: firstName.value,
@@ -465,6 +472,7 @@ order.addEventListener("click", function(e) {
         products.push(getStorage[i].id);
       }
     
+      //Inform the server that we will give him some informations (and the format of those informations).
       fetch("http://localhost:3000/api/products/order", {
         method: 'POST',
         headers: {
@@ -479,16 +487,18 @@ order.addEventListener("click", function(e) {
         return response.json()
       })
       .then(data => {
+        //The server give us an orderId (only if all the informations that we gave him were correct).
         console.log(data)
         let orderId = data.orderId;
-  
+
+        // We use that order id to pass it in the URL of the confirmation.html page. (with : ?id= ...)
+        // We then use that url to change the page to "confirmation page" and see our check for the order.
+        // The orderId isn't stocked in LocalStorage. 
         window.location.href = "confirmation.html?id=" + orderId;
       })
       .catch(error => console.log(error));
   
       localStorage.clear();
+      // Clean all the localStorage when the order is confirmed.
     }
-  }
-
-
 });
