@@ -46,6 +46,8 @@ if (getStorage === null || getStorage.length === 0) {
   cartElement = document.createElement("article");
   document.getElementById("cart__items").appendChild(cartElement);
   cartElement.textContent = "Vous n'avez ajouté aucun produit à votre panier.";
+  document.getElementById("totalPrice").textContent = 0;
+  document.getElementById("totalQuantity").textContent = 0;
 } else {
   const cartPagination = () => {
     // function that call the others functions to establish the pagination of the html
@@ -244,6 +246,8 @@ if (getStorage === null || getStorage.length === 0) {
   // For each item in Local Storage, will search for each parameters and apply it to the pages. Like the name, or the price.
 
   function cartDisplay() {
+
+
     for (x = 0; x < getData.length; x++) {
       getImg[x].setAttribute("src", `${dataProduct[x].imageUrl}`);
       h2[x].textContent = `${dataProduct[x].name}`;
@@ -256,9 +260,11 @@ if (getStorage === null || getStorage.length === 0) {
       document.getElementById(
         "totalQuantity"
       ).textContent = `${(totalQuantity += parseInt(getStorage[x].quantity))}`;
+
       document.getElementById("totalPrice").textContent = `${(totalPrice +=
         parseInt(dataProduct[x].price * getStorage[x].quantity))}`;
     }
+    
   }
 
   // We fetch the data with getElement, then we wait for the entirety of the data to be processed. THEN we call the cartDisplay function.
@@ -331,7 +337,7 @@ let firstName = document.getElementById("firstName");
 const validFirstName = (firstNameInput) => {
 
   let firstNameRegExp = /^[a-zæ]{1}[a-z-'éèñïíøæ\s]{2,15}$/ig;
-  let firstNameTest = firstNameRegExp.test(firstNameInput.value);
+  let firstNameTest = firstNameRegExp.test(firstName.value);
   let errorMsg = document.getElementById("firstNameErrorMsg");
 
   if (firstNameTest != true) {
@@ -353,7 +359,7 @@ let lastName = document.getElementById("lastName");
 const validLastName = (lastNameInput) => {
 
   let lastNameRegExp = /^[a-zæ]{1}[a-z-'éèñïíøæ\s]{3,20}$/ig;
-  let lastNameTest = lastNameRegExp.test(lastNameInput.value);
+  let lastNameTest = lastNameRegExp.test(lastName.value);
   let errorMsg = document.getElementById("lastNameErrorMsg");
 
   if (lastNameTest != true) {
@@ -375,7 +381,7 @@ let address = document.getElementById("address");
 const validAddress = (addressInput) => {
 
   let addressRegExp = /^\d{1,3}\s?(boite|bte|b|\/)?[\s,-]?(\d){0,3}?([\s,-]+)?[\D\s,\.]{3,30}[\d]{4,5}$/ig;
-  let addressTest = addressRegExp.test(addressInput.value);
+  let addressTest = addressRegExp.test(address.value);
   let errorMsg = document.getElementById("addressErrorMsg");
 
   if (addressTest != true) {
@@ -398,7 +404,7 @@ let city = document.getElementById("city");
 const validCity = (cityInput) => {
 
   let cityRegExp = /^[a-zé]{1}[a-z-'éèùçà]{2,24}$/ig;
-  let cityTest = cityRegExp.test(cityInput.value);
+  let cityTest = cityRegExp.test(city.value);
   let errorMsg = document.getElementById("cityErrorMsg");
 
   if (cityTest != true) {
@@ -420,13 +426,14 @@ let email = document.getElementById("email");
 const validEmail = (emailInput) => {
 
   let emailRegExp = /^[a-z0-9]{1}[a-z0-9-_\.]{3,20}@[a-z0-9-_]{3,15}(\.[a-z0-9]{3,10})?\.[a-z]{2,3}$/ig;
-  let emailTest = emailRegExp.test(emailInput.value);
+  let emailTest = emailRegExp.test(email.value);
   let errorMsg = document.getElementById("emailErrorMsg");
 
   if (emailTest != true) {
     errorMsg.textContent = "Veuillez indiquer une adrese Email valide";
+    console.log(emailTest);
   } else {
-    errorMsg.textContent = "";
+    errorMsg.textContent = " ";
   }
 
 };
@@ -452,8 +459,10 @@ order.addEventListener("click", function(e) {
     alert("Veuillez ajouter un produit avant de passer commande !")
 
     // If there is an item, we check if there's an error in the input.
-  } else if(firstNameErrorMsg.textContent != "" || lastNameErrorMsg.textContent != "" || addressErrorMsg.textContent != "" || cityErrorMsg.textContent != "" || emailErrorMsg.textContent != ""){
+  } else if(firstNameErrorMsg.textContent != " " || lastNameErrorMsg.textContent != " " || addressErrorMsg.textContent != " " || cityErrorMsg.textContent != " " || emailErrorMsg.textContent != " " ){
+
       alert("Veuillez renseigner CORRECTEMENT tout les champs du formulaire.");
+      
     } else { // If all is good, then we got here :
       // We create an object contact as requested by the server and an array for the products.
       // The array can ONLY contain the products ID. 
